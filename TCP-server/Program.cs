@@ -1,34 +1,21 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 class Server
 {
-    static string GetLocalIPAddress()
-    {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (var ip in host.AddressList)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-            {
-                return ip.ToString();
-            }
-        }
-        throw new Exception("Local IP Address Not Found!");
-    }
-
     static void Main()
     {
-        const string message = "Hello client";
+        const string message = "Hello TCP client ";
         const int port = 6013;
         TcpListener? tcpListener = null;
+        Random rnd = new Random();
 
         try
         {
             tcpListener = new TcpListener(IPAddress.Any, port);
             tcpListener.Start();
-            Console.WriteLine($"Server started. IP Address: {GetLocalIPAddress()}, Port: {port}");
+            Console.WriteLine($"Server started. IP Address: 192.168.56.101, Port: {port}");
 
             while (true)
             {
@@ -42,9 +29,10 @@ class Server
 
                 if (data.ToUpper().Equals("GET"))
                 {
-                    byte[] sendBytes = Encoding.ASCII.GetBytes(message);
+                    var newMessage = message + rnd.Next(1000000);
+                    byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
                     stream.Write(sendBytes, 0, sendBytes.Length);
-                    Console.WriteLine("Sent to client: " + message);
+                    Console.WriteLine("Sent to client: " + newMessage);
         
                     byte[] zeroData = new byte[256];
                     bytesRead = stream.Read(zeroData, 0, zeroData.Length);
