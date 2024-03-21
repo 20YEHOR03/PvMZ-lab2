@@ -7,7 +7,7 @@ class Client
     static void Main(string[] args)
     {
         const int port = 5588;
-        const string ip = "192.168.0.101";
+        const string ip = "192.168.56.101";
 
         try
         {
