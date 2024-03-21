@@ -5,16 +5,26 @@ using System.Text;
 
 class Server
 {
+    static string GetLocalIPAddress() {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (var ip in host.AddressList) {
+            if (ip.AddressFamily == AddressFamily.InterNetwork) {
+                return ip.ToString();
+            }
+        }
+        throw new Exception("Local IP Address Not Found!");
+    }
+    
     static void Main(string[] args)
     {
         const string message = "Hello client";
-        const int port = 5000;
+        const int port = 5588;
         UdpClient udpServer = null;
 
         try
         {
             udpServer = new UdpClient(port);
-            Console.WriteLine($"Server started. IP Address: {Dns.GetHostAddresses(Dns.GetHostName())[0]}, Port: {port}");
+            Console.WriteLine($"Server started. IP Address: {GetLocalIPAddress()}, Port: {port}");
 
             while (true)
             {
@@ -22,10 +32,11 @@ class Server
                 byte[] receiveBytes = udpServer.Receive(ref clientEndPoint);
                 string data = Encoding.ASCII.GetString(receiveBytes);
 
-                if (data.Equals("GET"))
+                if (data.ToUpper().Equals("GET"))
                 {
                     byte[] sendBytes = Encoding.ASCII.GetBytes(message);
                     udpServer.Send(sendBytes, sendBytes.Length, clientEndPoint);
+                    Console.WriteLine("Sent to client: " + message);
                 }
                 else
                 {
