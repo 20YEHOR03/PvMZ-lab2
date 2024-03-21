@@ -7,7 +7,7 @@ class Client
     static void Main(string[] args)
     {
         const int port = 5588;
-        const string ip = "192.168.56.101";
+        const string ip = "192.168.0.101";
 
         try
         {
@@ -23,8 +23,7 @@ class Client
                     break;
                 if (command.ToUpper() == "GET")
                 {
-                    byte[] sendBytes = Encoding.ASCII.GetBytes(command);
-                    udpClient.Send(sendBytes, sendBytes.Length);
+                    udpClient.Send(new byte[]{});
 
                     IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
                     byte[] receiveBytes = udpClient.Receive(ref serverEndPoint);
@@ -42,7 +41,7 @@ class Client
                 else
                 {
                     Console.WriteLine($"Received unknown command: {command}");
-                }
+                } 
             }
             udpClient.Close();
         }

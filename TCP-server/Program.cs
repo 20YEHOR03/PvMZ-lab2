@@ -22,28 +22,17 @@ class Server
                 TcpClient tcpClient = tcpListener.AcceptTcpClient();
 
                 NetworkStream stream = tcpClient.GetStream();
+                
+                var newMessage = message + rnd.Next(1000000);
+                byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
+                stream.Write(sendBytes, 0, sendBytes.Length);
+                Console.WriteLine("Sent to client: " + newMessage);
 
-                byte[] receiveBuffer = new byte[1024];
-                int bytesRead = stream.Read(receiveBuffer, 0, receiveBuffer.Length);
-                string data = Encoding.ASCII.GetString(receiveBuffer, 0, bytesRead);
-
-                if (data.ToUpper().Equals("GET"))
-                {
-                    var newMessage = message + rnd.Next(1000000);
-                    byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
-                    stream.Write(sendBytes, 0, sendBytes.Length);
-                    Console.WriteLine("Sent to client: " + newMessage);
-        
-                    byte[] zeroData = new byte[256];
-                    bytesRead = stream.Read(zeroData, 0, zeroData.Length);
-                    string zerosReceived = Encoding.ASCII.GetString(zeroData, 0, bytesRead);
-                    Console.WriteLine("Received zeros from client: " + zerosReceived);
-                }
-                else
-                {
-                    Console.WriteLine($"Received unknown command: {data}");
-                }
-
+                byte[] zeroData = new byte[256];
+                int bytesRead = stream.Read(zeroData, 0, zeroData.Length);
+                string zerosReceived = Encoding.ASCII.GetString(zeroData, 0, bytesRead);
+                Console.WriteLine("Received zeros from client: " + zerosReceived);
+                
                 stream.Close();
                 tcpClient.Close();
             }

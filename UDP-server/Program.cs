@@ -22,18 +22,14 @@ class Server
                 IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] receiveBytes = udpServer.Receive(ref clientEndPoint);
                 string data = Encoding.ASCII.GetString(receiveBytes);
-
-                if (data.ToUpper().Equals("GET"))
-                {
-                    var newMessage = message + rnd.Next(1000000);
-                    byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
-                    udpServer.Send(sendBytes, sendBytes.Length, clientEndPoint);
-                    Console.WriteLine("Sent to client: " + newMessage);
-                }
-                else
-                {
-                    Console.WriteLine($"Received zeros: {data}");
-                }
+                
+                var newMessage = message + rnd.Next(1000000);
+                byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
+                udpServer.Send(sendBytes, sendBytes.Length, clientEndPoint);
+                Console.WriteLine("Sent to client: " + newMessage);
+                receiveBytes = udpServer.Receive(ref clientEndPoint);
+                data = Encoding.ASCII.GetString(receiveBytes);
+                Console.WriteLine("Received zeros: " + data);
             }
         }
         catch (SocketException e)

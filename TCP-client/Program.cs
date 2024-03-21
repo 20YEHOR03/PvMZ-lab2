@@ -8,7 +8,7 @@ class Client
     static void Main(string[] args)
     {
         const int port = 6013;
-        const string ip = "192.168.56.101";
+        const string ip = "192.168.0.101";
 
         try
         {
@@ -24,9 +24,6 @@ class Client
                     using (TcpClient tcpClient = new TcpClient(ip, port))
                     {
                         NetworkStream stream = tcpClient.GetStream();
-
-                        byte[] sendBytes = Encoding.ASCII.GetBytes(command);
-                        stream.Write(sendBytes, 0, sendBytes.Length);
 
                         byte[] receiveBuffer = new byte[1024];
                         int bytesRead = stream.Read(receiveBuffer, 0, receiveBuffer.Length);
