@@ -23,7 +23,8 @@ class Client
                     break;
                 if (command.ToUpper() == "GET")
                 {
-                    udpClient.Send(new byte[]{});
+                    byte[] sendBytes = Encoding.ASCII.GetBytes(command);
+                    udpClient.Send(sendBytes, sendBytes.Length);
 
                     IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
                     byte[] receiveBytes = udpClient.Receive(ref serverEndPoint);

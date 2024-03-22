@@ -5,7 +5,7 @@ using System.Text;
 
 class Server
 { 
-    static void Main(string[] args)
+    static void Main()
     {
         const string message = "Hello UPD client ";
         const int port = 5588;
@@ -22,14 +22,18 @@ class Server
                 IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] receiveBytes = udpServer.Receive(ref clientEndPoint);
                 string data = Encoding.ASCII.GetString(receiveBytes);
-                
-                var newMessage = message + rnd.Next(1000000);
-                byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
-                udpServer.Send(sendBytes, sendBytes.Length, clientEndPoint);
-                Console.WriteLine("Sent to client: " + newMessage);
-                receiveBytes = udpServer.Receive(ref clientEndPoint);
-                data = Encoding.ASCII.GetString(receiveBytes);
-                Console.WriteLine("Received zeros: " + data);
+
+                if (data.ToUpper().Equals("GET"))
+                {
+                    var newMessage = message + rnd.Next(1000000);
+                    byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
+                    udpServer.Send(sendBytes, sendBytes.Length, clientEndPoint);
+                    Console.WriteLine("Sent to client: " + newMessage);
+                }
+                else
+                {
+                    Console.WriteLine("Received zeros: " + data);
+                }
             }
         }
         catch (SocketException e)
