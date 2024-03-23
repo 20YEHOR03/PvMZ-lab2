@@ -2,12 +2,13 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 class Server
 { 
-    static void Main()
+    static async Task Main()
     {
-        const string message = "Hello UPD client ";
+        const string message = "Hello UDP client ";
         const int port = 5588;
         UdpClient udpServer = null;
         Random rnd = new Random();
@@ -19,15 +20,17 @@ class Server
 
             while (true)
             {
-                IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                byte[] receiveBytes = udpServer.Receive(ref clientEndPoint);
+                UdpReceiveResult result = await udpServer.ReceiveAsync();
+                byte[] receiveBytes = result.Buffer;
+                IPEndPoint clientEndPoint = result.RemoteEndPoint;
+
                 string data = Encoding.ASCII.GetString(receiveBytes);
 
                 if (data.ToUpper().Equals("GET"))
                 {
                     var newMessage = message + rnd.Next(1000000);
                     byte[] sendBytes = Encoding.ASCII.GetBytes(newMessage);
-                    udpServer.Send(sendBytes, sendBytes.Length, clientEndPoint);
+                    await udpServer.SendAsync(sendBytes, sendBytes.Length, clientEndPoint);
                     Console.WriteLine("Sent to client: " + newMessage);
                 }
                 else
